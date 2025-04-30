@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HealthBot AI - Your Medical Assistant</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+        .chat-container {
+            height: calc(100vh - 200px);
+        }
+        .message-bubble {
+            max-width: 80%;
+            animation: fadeIn 0.3s ease-in;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .typing-indicator span {
+            animation: blink 1s infinite;
+        }
+        @keyframes blink {
+            0% { opacity: 0.2; }
+            20% { opacity: 1; }
+            100% { opacity: 0.2; }
+        }
+    </style>
+</head>
+<body class="bg-gray-50">
+    <div class="container mx-auto px-4 py-8 max-w-4xl">
+        <header class="text-center mb-8">
+            <h1 class="text-3xl font-bold text-blue-600 mb-2">HealthBot AI</h1>
+            <p class="text-gray-600">Your 24/7 Healthcare Assistant</p>
+        </header>
+
+        <div class="bg-white rounded-xl shadow-lg p-4">
+            <div id="disclaimer" class="bg-blue-50 p-4 rounded-lg mb-4">
+                <p class="text-sm text-blue-800">
+                    <i class="bi bi-info-circle-fill mr-2"></i>
+                    This AI assistant provides general health information only. Always consult with healthcare professionals for medical advice.
+                </p>
+            </div>
+
+            <div id="chat-container" class="chat-container overflow-y-auto mb-4 p-4 bg-gray-50 rounded-lg">
+                <div class="message-bubble bg-blue-100 p-3 rounded-lg mb-4 ml-auto">
+                    <p class="text-blue-800">Hello! I'm your HealthBot AI assistant. How can I help you today?</p>
+                </div>
+            </div>
+
+            <div class="border-t pt-4">
+                <form id="chat-form" class="flex gap-2">
+                    <input type="text" id="user-input" class="flex-1 px-4 py-2 rounded-lg border border-gray-300 focus:outline-none focus:border-blue-500" placeholder="Describe your symptoms or ask a health question...">
+                    <button type="submit" class="bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700 transition-colors">
+                        <i class="bi bi-send"></i>
+                    </button>
+                </form>
+            </div>
+        </div>
+
+        <div class="mt-6 text-center text-sm text-gray-500">
+            <p>Features: Symptom checking • Medical information • Emergency guidance</p>
+            <p class="mt-2">Available 24/7 • Private & Secure • HIPAA Compliant</p>
+        </div>
+    </div>
+
+    <script>
+        const chatContainer = document.getElementById('chat-container');
+        const chatForm = document.getElementById('chat-form');
+        const userInput = document.getElementById('user-input');
+
+        const responses = {
+            symptoms: [
+                "Can you tell me more about when these symptoms started?",
+                "Have you experienced any other symptoms along with this?",
+                "On a scale of 1-10, how would you rate your discomfort?",
+            ],
+            emergency: [
+                "This sounds serious. Please seek immediate medical attention or call emergency services.",
+                "While waiting for help, try to stay calm and seated. Is someone with you who can help?",
+            ],
+            general: [
+                "I understand your concern. Based on what you've described, this might be related to [condition]. However, it's best to consult with a healthcare provider for a proper diagnosis.",
+                "Here are some general wellness tips that might help. Remember, this isn't a substitute for professional medical advice.",
+            ]
+        };
+
+        function addMessage(message, isUser = false) {
+            const messageDiv = document.createElement('div');
+            messageDiv.className = `message-bubble ${isUser ? 'bg-blue-600 text-white ml-auto' : 'bg-blue-100 text-blue-800'} p-3 rounded-lg mb-4`;
+            messageDiv.innerHTML = `<p>${message}</p>`;
+            chatContainer.appendChild(messageDiv);
+            chatContainer.scrollTop = chatContainer.scrollHeight;
+        }
+
+        function showTypingIndicator() {
+            const indicator = document.createElement('div');
+            indicator.className = 'typing-indicator text-gray-500 mb-4';
+            indicator.innerHTML = '<span>.</span><span>.</span><span>.</span>';
+            chatContainer.appendChild(indicator);
+            return indicator;
+        }
+
+        function getAIResponse(input) {
+            const lowercaseInput = input.toLowerCase();
+            if (lowercaseInput.includes('emergency') || lowercaseInput.includes('severe') || lowercaseInput.includes('pain')) {
+                return responses.emergency[Math.floor(Math.random() * responses.emergency.length)];
+            } else if (lowercaseInput.includes('symptom') || lowercaseInput.includes('hurt') || lowercaseInput.includes('feel')) {
+                return responses.symptoms[Math.floor(Math.random() * responses.symptoms.length)];
+            }
+            return responses.general[Math.floor(Math.random() * responses.general.length)];
+        }
+
+        chatForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const message = userInput.value.trim();
+            if (!message) return;
+
+            // Add user message
+            addMessage(message, true);
+            userInput.value = '';
+
+            // Show typing indicator
+            const indicator = showTypingIndicator();
+
+            // Simulate AI processing
+            setTimeout(() => {
+                indicator.remove();
+                addMessage(getAIResponse(message));
+            }, 1500);
+        });
+    </script>
+<script>document.body.addEventListener('wheel', e => { if (!e.ctrlKey) return; e.preventDefault(); return }, { passive: false })</script>
+	</body>
+</html>
